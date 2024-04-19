@@ -1,0 +1,6 @@
+tensorflow
+opencv-python
+scikit-image
+pandas
+numpy
+scipy

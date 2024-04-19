@@ -53,32 +53,36 @@ def load_test_attention(carpeta):
             images_names.append(imagenes)
     return X_test, images_names
 
-np.set_printoptions(threshold=np.inf)
-data = []
-batch_size = 128
-model = tf.keras.models.load_model('pretrained_models\\DeepFakesON-Phys_CelebDF_V2.h5')
-# print(model.summary())
-# input("Press Enter to continue...")
+def predict_deepfake():
+    image_path = r"videos\\"
+    model_path = r"pretrained_models\\DeepFakesON-Phys_CelebDF_V2.h5"
 
-image_path = r"videos\\"
-carpeta_deep= os.path.join(image_path, "DeepFrames\\")
-carpeta_raw= os.path.join(image_path, "RawFrames\\")
+    np.set_printoptions(threshold=np.inf)
+    data = []
+    batch_size = 128
+    model = tf.keras.models.load_model(model_path)
+    # print(model.summary())
+    # input("Press Enter to continue...")
 
-test_data, images_names = load_test_motion(carpeta_deep)
-test_data2, images_names = load_test_attention(carpeta_raw)
+    carpeta_deep= os.path.join(image_path, "DeepFrames\\")
+    carpeta_raw= os.path.join(image_path, "RawFrames\\")
 
-test_data = np.array(test_data, copy=False, dtype=np.float32)
-test_data2 = np.array(test_data2, copy=False, dtype=np.float32)
+    test_data, images_names = load_test_motion(carpeta_deep)
+    test_data2, images_names = load_test_attention(carpeta_raw)
 
-predictions = model.predict([test_data, test_data2], batch_size=batch_size, verbose=1)
-bufsize = 1
-nombre_fichero_scores = 'deepfake_scores.txt'
-fichero_scores = open(nombre_fichero_scores,'w',buffering=bufsize)
-fichero_scores.write("img;score\n")
-for i in range(predictions.shape[0]):
-    fichero_scores.write("%s" % images_names[i]) #fichero
-    if float(predictions[i])<0:
-        predictions[i]='0'
-    elif float(predictions[i])>1:
-        predictions[i]='1'
-    fichero_scores.write(";%s\n" % predictions[i]) #scores predichas
+    test_data = np.array(test_data, copy=False, dtype=np.float32)
+    test_data2 = np.array(test_data2, copy=False, dtype=np.float32)
+
+    predictions = model.predict([test_data, test_data2], batch_size=batch_size, verbose=1)
+    bufsize = 1
+    nombre_fichero_scores = 'deepfake_scores.txt'
+    fichero_scores = open(nombre_fichero_scores,'w',buffering=bufsize)
+    fichero_scores.write("img;score\n")
+    for i in range(predictions.shape[0]):
+        fichero_scores.write("%s" % images_names[i]) #fichero
+        if float(predictions[i])<0:
+            predictions[i]='0'
+        elif float(predictions[i])>1:
+            predictions[i]='1'
+        fichero_scores.write(";%s\n" % predictions[i]) #scores predichas
+        print(images_names[i], predictions[i])

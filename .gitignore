@@ -1,3 +1,7 @@
+# Subdirectories in videos
+/videos/DeepFrames/
+/videos/RawFrames/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
